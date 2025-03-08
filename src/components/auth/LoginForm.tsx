@@ -20,7 +20,7 @@ export default function LoginForm() {
     try {
       const { error } = await auth.signIn(email, password);
       if (error) throw error;
-      router.push('/dashboard');
+      router.push('/');
       router.refresh();
     } catch (error: any) {
       setError(error.message);

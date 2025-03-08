@@ -28,24 +28,38 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh session if expired - required for Server Components
-  const { data: { session } } = await supabase.auth.getSession();
+  try {
+    // Refresh session if expired - required for Server Components
+    const { data: { session } } = await supabase.auth.getSession();
 
-  // Protected routes - redirect to login if no session
-  const protectedPaths = [
-    '/dashboard',
-    '/profile',
-    '/settings'
-  ];
+    // Protected routes - redirect to login if no session
+    const protectedPaths = [
+      '/dashboard',
+      '/profile',
+      '/settings'
+    ];
 
-  const isProtectedPath = protectedPaths.some(path => 
-    request.nextUrl.pathname.startsWith(path)
-  );
+    const isProtectedPath = protectedPaths.some(path => 
+      request.nextUrl.pathname.startsWith(path)
+    );
 
-  if (isProtectedPath && !session) {
-    const redirectUrl = new URL('/auth/login', request.url);
-    redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
+    if (isProtectedPath && !session) {
+      const redirectUrl = new URL('/auth/login', request.url);
+      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    // Handle post-login redirect
+    if (request.nextUrl.pathname === '/auth/login' && session) {
+      const redirectTo = request.nextUrl.searchParams.get('redirectTo') || '/';
+      return NextResponse.redirect(new URL(redirectTo, request.url));
+    }
+
+    // Update response cookies
+    return res;
+  } catch (error) {
+    console.error('Middleware error:', error);
+    return res;
   }
 
   // Auth pages - redirect to dashboard if already logged in
