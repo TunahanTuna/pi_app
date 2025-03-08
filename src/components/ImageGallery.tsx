@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState } from "react";
+import Image from "next/image";
 
 interface ImageGalleryProps {
   images: string[];
@@ -10,7 +10,7 @@ interface ImageGalleryProps {
 export function ImageGallery({ images }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
-
+  console.log(images);
   if (!images || images.length === 0) {
     return (
       <div className="aspect-square w-full bg-gray-100 flex items-center justify-center">
@@ -23,7 +23,9 @@ export function ImageGallery({ images }: ImageGalleryProps) {
     <div className="space-y-4">
       <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
         <div
-          className={`relative h-full w-full transition-transform duration-500 cursor-zoom-in ${isZoomed ? 'scale-150' : 'scale-100'}`}
+          className={`relative h-full w-full transition-transform duration-500 cursor-zoom-in ${
+            isZoomed ? "scale-150" : "scale-100"
+          }`}
           onMouseMove={(e) => {
             if (isZoomed) {
               const rect = e.currentTarget.getBoundingClientRect();
@@ -51,7 +53,9 @@ export function ImageGallery({ images }: ImageGalleryProps) {
             <button
               key={index}
               onClick={() => setSelectedImage(index)}
-              className={`relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100 ${selectedImage === index ? 'ring-2 ring-black' : ''}`}
+              className={`relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100 ${
+                selectedImage === index ? "ring-2 ring-black" : ""
+              }`}
             >
               <Image
                 src={image}
