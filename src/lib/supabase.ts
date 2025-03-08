@@ -1,4 +1,9 @@
-import { createClient } from "@supabase/supabase-js";
+import {
+  createClient,
+  AuthChangeEvent,
+  Session,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 import { Database } from "./database.types";
 
 if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
@@ -20,15 +25,13 @@ export const supabase = createClient<Database>(
     },
     realtime: {
       enabled: true,
-      params: {
-        eventsPerSecond: 10,
-      },
+      eventsPerSecond: 2,
     },
     storage: {
       multiTab: true,
       storageKey: "supabase.auth.token",
     },
-  }
+  } as any
 );
 
 // Authentication helper functions
@@ -50,17 +53,52 @@ export const auth = {
   },
 };
 
+// Database query helper functions
+export const getProduct = async (slug: string) => {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("slug", slug)
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return null;
+  }
+};
+
+export const getProductSlugs = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("slug")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    if (!data) return { data: [], error: null };
+
+    const slugs = data.map((product: any) => product.slug);
+    return { data: slugs, error: null };
+  } catch (error) {
+    return { data: null, error };
+  }
+};
+
 // Real-time subscription helper
 export const subscribeToChanges = <T = any>(
   table: string,
-  callback: (payload: RealtimePostgresChangesPayload<T>) => void,
-
-  event: "INSERT" | "UPDATE" | "DELETE" = "*"
+  callback: (payload: any) => void,
+  event: "INSERT" | "UPDATE" | "DELETE"
 ) => {
   return supabase
     .channel("db_changes")
-    .on("postgres_changes", { event, schema: "public", table }, (payload) =>
-      callback(payload as RealtimePostgresChangesPayload<T>)
+    .on(
+      "postgres_changes" as any,
+      { event, schema: "public", table },
+      (payload: any) => callback(payload as any)
     )
     .subscribe();
 };

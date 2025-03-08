@@ -1,24 +1,26 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { auth } from '@/lib/supabase';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { auth } from "@/lib/supabase";
 
 export default function ProfileForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [email, setEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
 
   useEffect(() => {
     const loadUserData = async () => {
-      const { data: { session } } = await auth.getSession();
+      const {
+        data: { session },
+      } = await auth.getSession();
       if (session?.user) {
-        setEmail(session.user.email || '');
+        setEmail(session.user.email || "");
       }
     };
     loadUserData();
@@ -31,9 +33,14 @@ export default function ProfileForm() {
     setLoading(true);
 
     try {
-      const { error } = await auth.updateUser({ email });
+      const {
+        data: { user },
+        error,
+      } = await auth.updateUserEmail(email);
       if (error) throw error;
-      setSuccess('Email update initiated. Please check your new email for verification.');
+      setSuccess(
+        "Email update initiated. Please check your new email for verification."
+      );
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -47,7 +54,7 @@ export default function ProfileForm() {
     setSuccess(null);
 
     if (newPassword !== confirmNewPassword) {
-      setError('New passwords do not match');
+      setError("New passwords do not match");
       return;
     }
 
@@ -55,13 +62,13 @@ export default function ProfileForm() {
 
     try {
       const { error } = await auth.updateUser({
-        password: newPassword
+        password: newPassword,
       });
       if (error) throw error;
-      setSuccess('Password updated successfully');
-      setNewPassword('');
-      setConfirmNewPassword('');
-      setCurrentPassword('');
+      setSuccess("Password updated successfully");
+      setNewPassword("");
+      setConfirmNewPassword("");
+      setCurrentPassword("");
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -73,7 +80,9 @@ export default function ProfileForm() {
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg space-y-8">
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Profile Settings</h2>
-        <p className="mt-1 text-sm text-gray-600">Update your account settings</p>
+        <p className="mt-1 text-sm text-gray-600">
+          Update your account settings
+        </p>
       </div>
 
       {error && (
@@ -85,7 +94,10 @@ export default function ProfileForm() {
 
       <form onSubmit={handleEmailUpdate} className="space-y-6">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
             Email Address
           </label>
           <div className="mt-1">
@@ -107,7 +119,7 @@ export default function ProfileForm() {
             disabled={loading}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            {loading ? 'Updating...' : 'Update Email'}
+            {loading ? "Updating..." : "Update Email"}
           </button>
         </div>
       </form>
@@ -115,7 +127,10 @@ export default function ProfileForm() {
       <div className="border-t border-gray-200 pt-6">
         <form onSubmit={handlePasswordUpdate} className="space-y-6">
           <div>
-            <label htmlFor="new-password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="new-password"
+              className="block text-sm font-medium text-gray-700"
+            >
               New Password
             </label>
             <div className="mt-1">
@@ -132,7 +147,10 @@ export default function ProfileForm() {
           </div>
 
           <div>
-            <label htmlFor="confirm-new-password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="confirm-new-password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Confirm New Password
             </label>
             <div className="mt-1">
@@ -154,7 +172,7 @@ export default function ProfileForm() {
               disabled={loading}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {loading ? 'Updating...' : 'Update Password'}
+              {loading ? "Updating..." : "Update Password"}
             </button>
           </div>
         </form>

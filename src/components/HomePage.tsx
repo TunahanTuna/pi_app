@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase";
 import { ImageGallery } from "./ImageGallery";
 
 interface Product {
+  images: never[];
   id: number;
   name: string;
   price: number;
