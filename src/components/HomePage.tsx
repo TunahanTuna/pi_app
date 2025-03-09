@@ -103,19 +103,35 @@ const HomePage = () => {
                   <a
                     href={`/products/${product.id}`}
                     key={product.id}
-                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow h-[330px] flex flex-col"
                   >
-                    <div className="aspect-w-16 aspect-h-9 relative">
-                      <ImageGallery images={product.images || []} />
+                    <div className="aspect-w-4 aspect-h-3 relative overflow-hidden h-[300px]">
+                      <div
+                        className="relative h-full w-full transition-transform duration-500 cursor-zoom-in hover:scale-150"
+                        onMouseMove={(e) => {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const x =
+                            ((e.clientX - rect.left) / rect.width) * 100;
+                          const y =
+                            ((e.clientY - rect.top) / rect.height) * 100;
+                          e.currentTarget.style.transformOrigin = `${x}% ${y}%`;
+                        }}
+                      >
+                        <img
+                          src={product.images?.[0] || "/placeholder.jpg"}
+                          alt={product.name}
+                          className="object-cover w-full h-full"
+                        />
+                      </div>
                     </div>
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    <div className="p-2 flex flex-col flex-grow">
+                      <h3 className="text-md font-semibold text-gray-800 mb-1 line-clamp-2">
                         {product.name}
                       </h3>
-                      <p className="text-purple-600 font-bold">
+                      <p className="text-purple-600 font-bold mt-auto">
                         ${product.price.toFixed(2)}
                       </p>
-                      <button className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+                      <button className="mt-1 w-full bg-indigo-600 text-white py-1.5 px-4 rounded-lg hover:bg-indigo-700 transition-colors text-sm">
                         Add to Cart
                       </button>
                     </div>
