@@ -100,7 +100,8 @@ const HomePage = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product) => (
-                  <div
+                  <a
+                    href={`/products/${product.id}`}
                     key={product.id}
                     className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                   >
@@ -118,7 +119,7 @@ const HomePage = () => {
                         Add to Cart
                       </button>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             )}
